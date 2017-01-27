@@ -1,4 +1,4 @@
-﻿namespace WindowsRedditWallpaperUpdater.Console
+﻿namespace WindowsRedditWallpaperUpdater.Library
 {
     public enum WallpaperStyle : int
     {

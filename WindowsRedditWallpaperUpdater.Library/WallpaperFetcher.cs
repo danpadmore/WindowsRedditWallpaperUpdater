@@ -1,27 +1,21 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Xml;
-using WindowsRedditWallpaperUpdater.Library;
-using static System.Console;
 
-namespace WindowsRedditWallpaperUpdater.Console
+namespace WindowsRedditWallpaperUpdater.Library
 {
-    class Program
+    public class WallpaperFetcher
     {
         private static readonly Regex WallpaperLinkRegex = new Regex(@"<a href=""([^ ""]*[.jpg|.png])"">\[link");
-        public static string RssUrl { get { return ConfigurationManager.AppSettings["rssUrl"]; } }
 
-        static void Main(string[] args)
+        public static void FetchAndSet(string rssUrl)
         {
             try
             {
-                WriteLine("Begin");
-
-                using (var xmlReader = XmlReader.Create(RssUrl))
+                using (var xmlReader = XmlReader.Create(rssUrl))
                 {
                     var feed = SyndicationFeed.Load(xmlReader);
                     var feedItems = feed.Items
@@ -54,12 +48,7 @@ namespace WindowsRedditWallpaperUpdater.Console
             }
             catch (Exception ex)
             {
-                WriteLine(ex);
                 EventLog.WriteEntry("Application", $"WallpaperUpdater failed: {ex}", EventLogEntryType.Information);
-            }
-            finally
-            {
-                WriteLine("End");
             }
         }
     }

@@ -1,27 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 
-namespace WindowsRedditWallpaperUpdater.Console
+namespace WindowsRedditWallpaperUpdater.Library
 {
     public class WallpaperHistory
     {
-        private static readonly Lazy<List<string>> _cachedWallpaperHistory;
+        private const string HistoryFileName = "WindowsRedditWallpaperUpdater-history.txt";
+        private static List<string> wallpaperHistory;
 
         static WallpaperHistory()
         {
-            _cachedWallpaperHistory = new Lazy<List<string>>(() => 
-            {
-                using (File.Open(WallpaperHistoryPath, FileMode.OpenOrCreate)) { }
-                return File.ReadLines(WallpaperHistoryPath).ToList();
-            });
+            CreateFile();
+            RefreshHistory();
+        }
+
+        private static void CreateFile()
+        {
+            using (File.Open(WallpaperHistoryPath, FileMode.OpenOrCreate)) { }
+        }
+
+        private static void RefreshHistory()
+        {
+            wallpaperHistory = File.ReadLines(WallpaperHistoryPath).ToList();
         }
 
         private static string WallpaperHistoryPath
         {
-            get { return ConfigurationManager.AppSettings["wallpaperHistoryPath"]; }
+            get { return Path.Combine(Path.GetTempPath(), HistoryFileName); }
         }
 
         public static void Add(Uri wallpaperUri)
@@ -39,7 +46,9 @@ namespace WindowsRedditWallpaperUpdater.Console
             if (string.IsNullOrWhiteSpace(wallpaperUri))
                 return false;
 
-            return _cachedWallpaperHistory.Value.Any(h => h == wallpaperUri);
+            RefreshHistory();
+
+            return wallpaperHistory.Any(h => h == wallpaperUri);
         }
     }
 }

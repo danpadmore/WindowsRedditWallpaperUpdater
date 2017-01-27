@@ -6,7 +6,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 
-namespace WindowsRedditWallpaperUpdater.Console
+namespace WindowsRedditWallpaperUpdater.Library
 {
     /// <summary>
     /// Based on http://stackoverflow.com/questions/1061678/change-desktop-wallpaper-using-code-in-net#1061682
