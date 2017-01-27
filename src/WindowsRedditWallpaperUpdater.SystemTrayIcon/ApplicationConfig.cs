@@ -8,43 +8,43 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
 {
     public class ApplicationConfig : ApplicationContext
     {
-        private System.Timers.Timer wallpaperRefreshTimer;
-        private NotifyIcon NotifyIcon;
+        private readonly NotifyIcon _notifyIcon;
+        private readonly WallpaperUpdater _wallpaperUpdater;
+        private readonly System.Timers.Timer _wallpaperRefreshTimer;
+
         private static string RssUrl { get { return Properties.Settings.Default.RssUrl; } }
 
         public ApplicationConfig()
         {
-            Application.ApplicationExit += new EventHandler(OnApplicationExit);
-            FetchWallpaperOnApplicationInit();
-            InitializeTrayIcon();
-            InitializeTimer();
-        }
+            _notifyIcon = new NotifyIcon();
+            _wallpaperUpdater = new WallpaperUpdater();
+            _wallpaperRefreshTimer = new System.Timers.Timer();
 
-        private void FetchWallpaperOnApplicationInit()
-        {
-            WallpaperFetcher.FetchAndSet(RssUrl);
+            InitializeTimer();
+            InitializeTrayIcon();
+            Application.ApplicationExit += new EventHandler(OnApplicationExit);
+
+            _wallpaperUpdater.Update(RssUrl);
         }
 
         private void InitializeTimer()
         {
-            wallpaperRefreshTimer = new System.Timers.Timer();
-            wallpaperRefreshTimer.Elapsed += new ElapsedEventHandler(NextWallpaperEvent);
-            wallpaperRefreshTimer.Interval = ((Properties.Settings.Default.TimerIntervalInMinutes * 60) * 1000);
-            wallpaperRefreshTimer.Start();
+            _wallpaperRefreshTimer.Elapsed += new ElapsedEventHandler(NextWallpaperEvent);
+            _wallpaperRefreshTimer.Interval = ((Properties.Settings.Default.TimerIntervalInMinutes * 60) * 1000);
+            _wallpaperRefreshTimer.Start();
         }
 
         private void InitializeTrayIcon()
         {
-            NotifyIcon = new NotifyIcon();
-            NotifyIcon.Text = "WindowsRedditWallpaperUpdater";
-            NotifyIcon.Icon = Properties.Resources.IconEarth;
+            _notifyIcon.Text = "WindowsRedditWallpaperUpdater";
+            _notifyIcon.Icon = Properties.Resources.IconEarth;
 
-            NotifyIcon.ContextMenuStrip = BuildContextMenu(new ToolStripItem[] {
+            _notifyIcon.ContextMenuStrip = BuildContextMenu(new ToolStripItem[] {
                 BuildToolStripMenuItem("Next Wallpaper", new EventHandler(NextWallpaperEvent)),
                 BuildToolStripMenuItem("Exit", new EventHandler(ExitEvent))
             });
 
-            NotifyIcon.Visible = true;
+            _notifyIcon.Visible = true;
         }
 
         private ContextMenuStrip BuildContextMenu(ToolStripItem[] toolStripMenuItem)
@@ -53,6 +53,7 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
             contextMenuStrip.Items.AddRange(toolStripMenuItem);
             contextMenuStrip.Name = "TrayIconContextMenu";
             contextMenuStrip.Size = new Size(153, 70);
+
             return contextMenuStrip;
         }
 
@@ -63,24 +64,25 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
             toolStripMenuItem.Size = new Size(152, 22);
             toolStripMenuItem.Text = name;
             toolStripMenuItem.Click += eventHandler;
-            return toolStripMenuItem;
-        }
 
-        private void OnApplicationExit(object sender, EventArgs e)
-        {
-            NotifyIcon.Visible = false;
+            return toolStripMenuItem;
         }
 
         private void NextWallpaperEvent(object sender, EventArgs e)
         {
-            WallpaperFetcher.FetchAndSet(RssUrl);
-            wallpaperRefreshTimer.Stop();
-            wallpaperRefreshTimer.Start();
+            _wallpaperUpdater.Update(RssUrl);
+            _wallpaperRefreshTimer.Stop();
+            _wallpaperRefreshTimer.Start();
         }
 
         private void ExitEvent(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void OnApplicationExit(object sender, EventArgs e)
+        {
+            _notifyIcon.Visible = false;
         }
     }
 }

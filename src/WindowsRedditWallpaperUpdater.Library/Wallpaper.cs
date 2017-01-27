@@ -13,19 +13,21 @@ namespace WindowsRedditWallpaperUpdater.Library
     /// </summary>
     public sealed class Wallpaper
     {
-        private const string WallpaperFilename = "wallpaper-updater.bmp";
-        private const int SPI_SETDESKWALLPAPER = 20;
-        private const int SPIF_UPDATEINIFILE = 0x01;
-        private const int SPIF_SENDWININICHANGE = 0x02;
-
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 
-        Wallpaper()
+        private const int SPIF_UPDATEINIFILE = 0x01;
+        private const int SPI_SETDESKWALLPAPER = 20;
+        private const int SPIF_SENDWININICHANGE = 0x02;
+        private const string WallpaperFilename = "wallpaper-updater.bmp";
+        private readonly WallpaperHistory _wallpaperHistory;
+
+        public Wallpaper()
         {
+            _wallpaperHistory = new WallpaperHistory();
         }
 
-        public static void Set(Uri uri, WallpaperStyle style)
+        public void Set(Uri uri, WallpaperStyle style)
         {
             var wallpaperPath = DownloadWallpaper(uri);
 
@@ -37,10 +39,10 @@ namespace WindowsRedditWallpaperUpdater.Library
                 lpvParam: wallpaperPath,
                 fuWinIni: SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
 
-            WallpaperHistory.Add(uri);
+            _wallpaperHistory.Add(uri);
         }
 
-        private static string DownloadWallpaper(Uri uri)
+        private string DownloadWallpaper(Uri uri)
         {
             using (var webclient = new WebClient())
             using (var wallpaperStream = webclient.OpenRead(uri.ToString()))
@@ -53,7 +55,7 @@ namespace WindowsRedditWallpaperUpdater.Library
             }
         }
 
-        private static void SetWallpaperStyle(WallpaperStyle style)
+        private void SetWallpaperStyle(WallpaperStyle style)
         {
             using (var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
             {

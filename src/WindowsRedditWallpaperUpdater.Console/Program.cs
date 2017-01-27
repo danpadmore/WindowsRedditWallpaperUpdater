@@ -8,15 +8,16 @@ namespace WindowsRedditWallpaperUpdater.Console
 {
     class Program
     {
-        public static string RssUrl { get { return ConfigurationManager.AppSettings["rssUrl"]; } }
-
         static void Main(string[] args)
         {
             try
             {
                 WriteLine("Begin");
+        
+                var wallpaperUpdater = new WallpaperUpdater();
+                var rssUrl = ConfigurationManager.AppSettings["rssUrl"];
 
-                WallpaperFetcher.FetchAndSet(RssUrl);
+                wallpaperUpdater.Update(rssUrl);
             }
             catch (Exception ex)
             {

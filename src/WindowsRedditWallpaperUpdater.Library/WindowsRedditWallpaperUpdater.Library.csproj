@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wallpaper.cs" />
-    <Compile Include="WallpaperFetcher.cs" />
+    <Compile Include="WallpaperUpdater.cs" />
     <Compile Include="WallpaperHistory.cs" />
     <Compile Include="WallpaperStyle.cs" />
   </ItemGroup>

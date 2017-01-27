@@ -10,6 +10,7 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
             Application.Run(new ApplicationConfig());
         }
     }

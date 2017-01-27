@@ -1,54 +1,51 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.IO.IsolatedStorage;
 
 namespace WindowsRedditWallpaperUpdater.Library
 {
     public class WallpaperHistory
     {
-        private const string HistoryFileName = "WindowsRedditWallpaperUpdater-history.txt";
-        private static List<string> wallpaperHistory;
+        private const string WallpaperHistoryFilePath = "wallpaper-history.log";
 
-        static WallpaperHistory()
+        public void Add(Uri wallpaperUri)
         {
-            CreateFile();
-            RefreshHistory();
+            using (var file = OpenFile(FileMode.Append))
+            using (var writer = new StreamWriter(file))
+            {
+                writer.WriteLine($"{wallpaperUri.AbsoluteUri}{Environment.NewLine}");
+            }
         }
 
-        private static void CreateFile()
+        public void Ignore(string wallpaperUrl)
         {
-            using (File.Open(WallpaperHistoryPath, FileMode.OpenOrCreate)) { }
+            using (var file = OpenFile(FileMode.Append))
+            using (var writer = new StreamWriter(file))
+            {
+                writer.WriteLine($"{wallpaperUrl}{Environment.NewLine}");
+            }
         }
 
-        private static void RefreshHistory()
+        public IReadOnlyList<string> GetAll()
         {
-            wallpaperHistory = File.ReadLines(WallpaperHistoryPath).ToList();
+            IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+
+            using (var file = OpenFile(FileMode.OpenOrCreate))
+            using (var reader = new StreamReader(file))
+            {
+                return reader.ReadToEnd()
+                    .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
+            }
         }
 
-        private static string WallpaperHistoryPath
+        private IsolatedStorageFileStream OpenFile(FileMode fileMode)
         {
-            get { return Path.Combine(Path.GetTempPath(), HistoryFileName); }
-        }
-
-        public static void Add(Uri wallpaperUri)
-        {
-            File.AppendAllText(WallpaperHistoryPath, $"{wallpaperUri.AbsoluteUri}{Environment.NewLine}");
-        }
-
-        public static void Ignore(string wallpaperUrl)
-        {
-            File.AppendAllText(WallpaperHistoryPath, $"{wallpaperUrl}{Environment.NewLine}");
-        }
-
-        public static bool IsKnown(string wallpaperUri)
-        {
-            if (string.IsNullOrWhiteSpace(wallpaperUri))
-                return false;
-
-            RefreshHistory();
-
-            return wallpaperHistory.Any(h => h == wallpaperUri);
+            return IsolatedStorageFile
+                .GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null)
+                .OpenFile(WallpaperHistoryFilePath, fileMode);
         }
     }
 }
