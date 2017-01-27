@@ -5,9 +5,9 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsRedditWallpaperUpdater.Console", "src\WindowsRedditWallpaperUpdater.Console\WindowsRedditWallpaperUpdater.Console.csproj", "{7466182B-475A-41C1-885B-9A0C64D6D698}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsRedditWallpaperUpdater.SystemTrayIcon", "WindowsRedditWallpaperUpdater.SystemTrayIcon\WindowsRedditWallpaperUpdater.SystemTrayIcon.csproj", "{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsRedditWallpaperUpdater.Library", "src\WindowsRedditWallpaperUpdater.Library\WindowsRedditWallpaperUpdater.Library.csproj", "{FB11F073-B901-4D41-B040-DCB440C9D24F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsRedditWallpaperUpdater.Library", "WindowsRedditWallpaperUpdater.Library\WindowsRedditWallpaperUpdater.Library.csproj", "{FB11F073-B901-4D41-B040-DCB440C9D24F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsRedditWallpaperUpdater.SystemTrayIcon", "src\WindowsRedditWallpaperUpdater.SystemTrayIcon\WindowsRedditWallpaperUpdater.SystemTrayIcon.csproj", "{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{7466182B-475A-41C1-885B-9A0C64D6D698}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7466182B-475A-41C1-885B-9A0C64D6D698}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7466182B-475A-41C1-885B-9A0C64D6D698}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FB11F073-B901-4D41-B040-DCB440C9D24F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FB11F073-B901-4D41-B040-DCB440C9D24F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB11F073-B901-4D41-B040-DCB440C9D24F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB11F073-B901-4D41-B040-DCB440C9D24F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E22CF248-DEB5-4ECC-8821-3411E18FA4FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

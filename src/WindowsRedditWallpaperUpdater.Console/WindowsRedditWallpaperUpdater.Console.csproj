@@ -56,7 +56,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\WindowsRedditWallpaperUpdater.Library\WindowsRedditWallpaperUpdater.Library.csproj">
+    <ProjectReference Include="..\WindowsRedditWallpaperUpdater.Library\WindowsRedditWallpaperUpdater.Library.csproj">
       <Project>{fb11f073-b901-4d41-b040-dcb440c9d24f}</Project>
       <Name>WindowsRedditWallpaperUpdater.Library</Name>
     </ProjectReference>
