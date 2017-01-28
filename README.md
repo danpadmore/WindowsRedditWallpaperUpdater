@@ -2,6 +2,8 @@
 
 This first version updates your wallpaper periodically to the most popular image [reddit's EarthPorn](https://www.reddit.com/r/EarthPorn/).
 
+Thanks to [github.com/petermarnef](https://github.com/petermarnef) for turning the original console application into a more user friendly system tray icon.
+
 ### Install
 
 Download all files in [artifacts](https://github.com/danpadmore/WindowsRedditWallpaperUpdater/tree/master/artifacts) into a single folder on your computer. 
