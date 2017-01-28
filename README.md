@@ -1,37 +1,29 @@
-## Welcome to GitHub Pages
+## Welcome to your reddit WallpaperUpdater for Windows
 
-You can use the [editor on GitHub](https://github.com/danpadmore/WindowsRedditWallpaperUpdater/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+This first version updates your wallpaper periodically to the most popular image [reddit's EarthPorn](https://www.reddit.com/r/EarthPorn/).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Install
 
-### Markdown
+Download all files in [artifacts](https://github.com/danpadmore/WindowsRedditWallpaperUpdater/tree/master/artifacts) into a single folder on your computer. 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+To run the application execute	*WindowsRedditWallpaperUpdater.SystemTrayIcon.exe*
 
-```markdown
-Syntax highlighted code block
+If you want to run the application at startup, you can use [Task Scheduler](https://msdn.microsoft.com/en-us/library/windows/desktop/aa383614(v=vs.85).aspx).
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+Note: Obviously I should make this more user friendly, like at least zip the files, but I'm going to let you do some work too for now :)
 
-1. Numbered
-2. List
+### Next
 
-**Bold** and _Italic_ and `Code` text
+This application runs as an icon in your system tray. 
+If you don't like the selected wallpaper, right-click the icon the skip to the next wallpaper.
 
-[Link](url) and ![Image](src)
-```
+### Behind a proxy
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/danpadmore/WindowsRedditWallpaperUpdater/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in Notepad and add the following section after </startup>:
+```xml
+<system.net>
+ <defaultProxy useDfeaultCredentials="true">
+  <proxy scriptLocation="http://your-proxy-script-location/here.dat" />
+  </defaultProxy>
+ </system.net>
