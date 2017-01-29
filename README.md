@@ -6,7 +6,7 @@ Thanks to [github.com/petermarnef](https://github.com/petermarnef) for turning t
 
 ### Install
 
-Download all files in [artifacts](https://github.com/danpadmore/WindowsRedditWallpaperUpdater/tree/master/artifacts) into a single folder on your computer. 
+Download all *WindowsRedditWallpaperUpdater.\** files from [the latest release](https://github.com/danpadmore/WindowsRedditWallpaperUpdater/releases) to a single folder on your computer. 
 
 To run the application execute	*WindowsRedditWallpaperUpdater.SystemTrayIcon.exe*
 
