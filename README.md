@@ -23,9 +23,10 @@ If you don't like the selected wallpaper, right-click the icon the skip to the n
 ### Behind a proxy
 
 Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in Notepad and add the following section after </startup>:
-```xml
+<pre>
 <system.net>
  <defaultProxy useDfeaultCredentials="true">
   <proxy scriptLocation="http://your-proxy-script-location/here.dat" />
   </defaultProxy>
  </system.net>
+</pre>
