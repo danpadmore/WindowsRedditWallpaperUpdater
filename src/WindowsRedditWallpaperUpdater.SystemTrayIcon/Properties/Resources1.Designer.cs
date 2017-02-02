@@ -63,9 +63,9 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon IconEarth {
+        internal static System.Drawing.Icon SystemTrayIcon {
             get {
-                object obj = ResourceManager.GetObject("IconEarth", resourceCulture);
+                object obj = ResourceManager.GetObject("SystemTrayIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

@@ -40,7 +40,7 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
         private void InitializeTrayIcon()
         {
             _notifyIcon.Text = "WindowsRedditWallpaperUpdater";
-            _notifyIcon.Icon = Properties.Resources.IconEarth;
+            _notifyIcon.Icon = Properties.Resources.SystemTrayIcon;
 
             _notifyIcon.ContextMenuStrip = BuildContextMenu(new ToolStripItem[] {
                 BuildToolStripMenuItem("Next Wallpaper", new EventHandler(NextWallpaperEvent)),
