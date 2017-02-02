@@ -17,19 +17,29 @@ Note: Obviously I should make this more user friendly, like at least zip the fil
 
 ### Next
 
-This application runs as an icon in your system tray. 
-If you don't like the selected wallpaper, right-click the icon the skip to the next wallpaper.
+This application runs in the background as an icon in your system tray.
 
-### Your favourite subreddit
+You can skip the current wallpaper by right-clicking the icon selecting Next Wallpaper.
 
-Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and update the value of rssUrl:    
+### Choose your favourite subreddit
+
+Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and update the **value** of rssUrl:    
 ```xml
-<add key="rssUrl" value="**https://www.reddit.com/r/EarthPorn/.rss*"/>
+<add key="rssUrl" value="https://www.reddit.com/r/EarthPorn/.rss"/>
+```
+
+### Change the refresh interval speed
+
+Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and update the **value** of refreshIntervalInMinutes:
+
+```xml
+<add key="refreshIntervalInMinutes" value="60"/>
 ```
 
 ### Behind a proxy
 
-Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and add the following section after *startup*:
+Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and add the following section **after startup**:
+
 ```xml
 <system.net>
  <defaultProxy useDfeaultCredentials="true">
