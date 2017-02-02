@@ -23,7 +23,8 @@ You can skip the current wallpaper by right-clicking the icon and selecting Next
 
 ### Choose your favourite subreddit
 
-Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and update the **value** of rssUrl:    
+Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and update the **value** of rssUrl:
+
 ```xml
 <add key="rssUrl" value="https://www.reddit.com/r/EarthPorn/.rss"/>
 ```
