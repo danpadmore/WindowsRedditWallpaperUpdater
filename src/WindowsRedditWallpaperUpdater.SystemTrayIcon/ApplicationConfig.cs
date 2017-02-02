@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Timers;
@@ -13,7 +14,20 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
         private readonly WallpaperUpdater _wallpaperUpdater;
         private readonly System.Timers.Timer _wallpaperRefreshTimer;
 
-        private static string RssUrl { get { return Properties.Settings.Default.RssUrl; } }
+        private string RssUrl
+        {
+            get { return ConfigurationManager.AppSettings["rssUrl"]; }
+        }
+
+        private TimeSpan RefreshInterval
+        {
+            get
+            {
+                var refreshIntervalInMinutes = int.Parse(ConfigurationManager.AppSettings["refreshIntervalInMinutes"]);
+
+                return TimeSpan.FromMinutes(refreshIntervalInMinutes);
+            }
+        }
 
         public ApplicationConfig(NotifyIcon notifyIcon)
         {
@@ -33,7 +47,7 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
         private void InitializeTimer()
         {
             _wallpaperRefreshTimer.Elapsed += new ElapsedEventHandler(NextWallpaperEvent);
-            _wallpaperRefreshTimer.Interval = ((Properties.Settings.Default.TimerIntervalInMinutes * 60) * 1000);
+            _wallpaperRefreshTimer.Interval = RefreshInterval.TotalMilliseconds;
             _wallpaperRefreshTimer.Start();
         }
 
