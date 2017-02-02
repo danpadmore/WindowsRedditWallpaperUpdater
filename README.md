@@ -38,12 +38,14 @@ Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and
 
 ### Behind a proxy
 
-Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and add the following section **after startup**:
+Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and add the following section **after configuration**:
 
 ```xml
-<system.net>
- <defaultProxy useDfeaultCredentials="true">
-  <proxy scriptLocation="http://your-proxy-script-location/here.dat" />
-  </defaultProxy>
- </system.net>
+<configuration>
+
+ <system.net>
+  <defaultProxy useDfeaultCredentials="true">
+   <proxy scriptLocation="http://your-proxy-script-location/here.dat" />
+   </defaultProxy>
+  </system.net>
 ```
