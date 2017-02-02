@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Timers;
 using System.Windows.Forms;
@@ -14,9 +15,11 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
 
         private static string RssUrl { get { return Properties.Settings.Default.RssUrl; } }
 
-        public ApplicationConfig()
+        public ApplicationConfig(NotifyIcon notifyIcon)
         {
-            _notifyIcon = new NotifyIcon();
+            if (notifyIcon == null) throw new ArgumentNullException(nameof(notifyIcon));
+
+            _notifyIcon = notifyIcon;
             _wallpaperUpdater = new WallpaperUpdater();
             _wallpaperRefreshTimer = new System.Timers.Timer();
 
@@ -83,6 +86,7 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
         private void OnApplicationExit(object sender, EventArgs e)
         {
             _notifyIcon.Visible = false;
+            EventLog.WriteEntry("Application", $"WindowsRedditWallpaperUpdater.SystemTrayIcon exited", EventLogEntryType.Information);
         }
     }
 }
