@@ -19,7 +19,7 @@ Note: Obviously I should make this more user friendly, like at least zip the fil
 
 This application runs in the background as an icon in your system tray.
 
-You can skip the current wallpaper by right-clicking the icon selecting Next Wallpaper.
+You can skip the current wallpaper by right-clicking the icon and selecting Next Wallpaper.
 
 ### Choose your favourite subreddit
 
