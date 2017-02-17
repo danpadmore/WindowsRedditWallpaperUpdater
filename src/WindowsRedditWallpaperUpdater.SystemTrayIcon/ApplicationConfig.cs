@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.Drawing;
-using System.Timers;
 using System.Windows.Forms;
 using WindowsRedditWallpaperUpdater.Library;
 
@@ -10,97 +9,42 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
 {
     public class ApplicationConfig : ApplicationContext
     {
-        private readonly NotifyIcon _notifyIcon;
-        private readonly WallpaperUpdater _wallpaperUpdater;
-        private readonly System.Timers.Timer _wallpaperRefreshTimer;
+        private readonly int intervalInMinutes = int.Parse(ConfigurationManager.AppSettings["refreshIntervalInMinutes"]);
+        private readonly string rssUrl = ConfigurationManager.AppSettings["rssUrl"];
 
-        private string RssUrl
+        private readonly WallpaperUpdater wallpaperUpdater;
+        private readonly IntervalTimer intervalTimer;
+        private readonly TrayIcon trayIcon;
+
+        public ApplicationConfig()
         {
-            get { return ConfigurationManager.AppSettings["rssUrl"]; }
-        }
+            wallpaperUpdater = new WallpaperUpdater();
+            intervalTimer = new IntervalTimer(() => wallpaperUpdater.Update(rssUrl), intervalInMinutes);
 
-        private TimeSpan RefreshInterval
-        {
-            get
-            {
-                var refreshIntervalInMinutes = int.Parse(ConfigurationManager.AppSettings["refreshIntervalInMinutes"]);
+            trayIcon = new TrayIcon("WindowsRedditWallpaperUpdater", Properties.Resources.SystemTrayIcon)
+                .AddMenuItem("Next Wallpaper", new EventHandler(OnNextWallpaper))
+                .AddMenuItem("Exit", new EventHandler(OnExit))
+                .Initialize();
 
-                return TimeSpan.FromMinutes(refreshIntervalInMinutes);
-            }
-        }
-
-        public ApplicationConfig(NotifyIcon notifyIcon)
-        {
-            if (notifyIcon == null) throw new ArgumentNullException(nameof(notifyIcon));
-
-            _notifyIcon = notifyIcon;
-            _wallpaperUpdater = new WallpaperUpdater();
-            _wallpaperRefreshTimer = new System.Timers.Timer();
-
-            InitializeTimer();
-            InitializeTrayIcon();
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
-            _wallpaperUpdater.Update(RssUrl);
+            wallpaperUpdater.Update(rssUrl);
         }
 
-        private void InitializeTimer()
+        private void OnNextWallpaper(object sender, EventArgs e)
         {
-            _wallpaperRefreshTimer.Elapsed += new ElapsedEventHandler(NextWallpaperEvent);
-            _wallpaperRefreshTimer.Interval = RefreshInterval.TotalMilliseconds;
-            _wallpaperRefreshTimer.Start();
+            wallpaperUpdater.Update(rssUrl);
+            intervalTimer.RestartInterval();
         }
 
-        private void InitializeTrayIcon()
-        {
-            _notifyIcon.Text = "WindowsRedditWallpaperUpdater";
-            _notifyIcon.Icon = Properties.Resources.SystemTrayIcon;
-
-            _notifyIcon.ContextMenuStrip = BuildContextMenu(new ToolStripItem[] {
-                BuildToolStripMenuItem("Next Wallpaper", new EventHandler(NextWallpaperEvent)),
-                BuildToolStripMenuItem("Exit", new EventHandler(ExitEvent))
-            });
-
-            _notifyIcon.Visible = true;
-        }
-
-        private ContextMenuStrip BuildContextMenu(ToolStripItem[] toolStripMenuItem)
-        {
-            var contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.AddRange(toolStripMenuItem);
-            contextMenuStrip.Name = "TrayIconContextMenu";
-            contextMenuStrip.Size = new Size(153, 70);
-
-            return contextMenuStrip;
-        }
-
-        private ToolStripMenuItem BuildToolStripMenuItem(string name, EventHandler eventHandler)
-        {
-            var toolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem.Name = name.Replace(" ", "");
-            toolStripMenuItem.Size = new Size(152, 22);
-            toolStripMenuItem.Text = name;
-            toolStripMenuItem.Click += eventHandler;
-
-            return toolStripMenuItem;
-        }
-
-        private void NextWallpaperEvent(object sender, EventArgs e)
-        {
-            _wallpaperUpdater.Update(RssUrl);
-            _wallpaperRefreshTimer.Stop();
-            _wallpaperRefreshTimer.Start();
-        }
-
-        private void ExitEvent(object sender, EventArgs e)
+        private void OnExit(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
-            _notifyIcon.Visible = false;
-            EventLog.WriteEntry("Application", $"WindowsRedditWallpaperUpdater.SystemTrayIcon exited", EventLogEntryType.Information);
+            trayIcon.Dispose();
         }
     }
 }

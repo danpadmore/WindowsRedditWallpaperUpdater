@@ -61,6 +61,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="IntervalTimer.cs" />
+    <Compile Include="TrayIcon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
