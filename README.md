@@ -21,7 +21,7 @@ This application runs in the background as an icon in your system tray.
 
 You can skip the current wallpaper by right-clicking the icon and selecting Next Wallpaper.
 
-### Choose your favourite subreddit
+### Choose your favourite subreddits
 
 In the WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config you can find the location of a .json file in which you can specify a list of reddit RSS feeds.
 
