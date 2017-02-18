@@ -6,18 +6,18 @@ using static System.Console;
 
 namespace WindowsRedditWallpaperUpdater.Console
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             try
             {
                 WriteLine("Begin");
-        
+
                 var wallpaperUpdater = new WallpaperUpdater();
                 var rssUrl = ConfigurationManager.AppSettings["rssUrl"];
 
-                wallpaperUpdater.Update(rssUrl);
+                wallpaperUpdater.Update(new RssFeed("Default feed", rssUrl));
             }
             catch (Exception ex)
             {

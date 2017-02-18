@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using WindowsRedditWallpaperUpdater.Library;
 
@@ -7,32 +10,79 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
 {
     public class ApplicationConfig : ApplicationContext
     {
+        private readonly string rssFeedsFile = ConfigurationManager.AppSettings["rssFeedsFile"];
         private readonly int intervalInMinutes = int.Parse(ConfigurationManager.AppSettings["refreshIntervalInMinutes"]);
-        private readonly string rssUrl = ConfigurationManager.AppSettings["rssUrl"];
 
         private readonly WallpaperUpdater wallpaperUpdater;
         private readonly IntervalTimer intervalTimer;
         private readonly TrayIcon trayIcon;
+        private List<RssFeed> rssFeeds;
+        private RssFeed selectedRssFeed;
 
         public ApplicationConfig()
         {
-            wallpaperUpdater = new WallpaperUpdater();
-            intervalTimer = new IntervalTimer(() => wallpaperUpdater.Update(rssUrl), intervalInMinutes);
+            ReadRssFeedsFromFileOnDisk();
 
-            trayIcon = new TrayIcon("WindowsRedditWallpaperUpdater", Properties.Resources.SystemTrayIcon)
-                .AddMenuItem("Next Wallpaper", new EventHandler(OnNextWallpaper))
-                .AddMenuItem("Exit", new EventHandler(OnExit))
-                .Initialize();
+            trayIcon = new TrayIcon("WindowsRedditWallpaperUpdater", Properties.Resources.SystemTrayIcon);
+            AddRssFeedsAsMenuItems();
+            AddDefaultMenuItems();
+            trayIcon.Initialize();
 
+            intervalTimer = new IntervalTimer(() => wallpaperUpdater.Update(selectedRssFeed), intervalInMinutes);
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
-            wallpaperUpdater.Update(rssUrl);
+            wallpaperUpdater = new WallpaperUpdater();
+            wallpaperUpdater.Update(selectedRssFeed);
+        }
+
+        private void ReadRssFeedsFromFileOnDisk()
+        {
+            rssFeeds = RssFeedsReader.ReadFileFromDisk(rssFeedsFile);
+
+            if (rssFeeds.Count < 1)
+                EventLog.WriteEntry("Application", $"No rss feeds found in file {rssFeedsFile}.", EventLogEntryType.Error);
+
+            selectedRssFeed = rssFeeds.First();
+        }
+
+        private void AddDefaultMenuItems()
+        {
+            trayIcon
+                .AddMenuItem("Next Wallpaper", new EventHandler(OnNextWallpaper))
+                .AddMenuItem("Exit", new EventHandler(OnExit));
+        }
+
+        private void AddRssFeedsAsMenuItems()
+        {
+            foreach (var rssFeed in rssFeeds)
+            {
+                trayIcon.AddMenuItem(rssFeed.Name, new EventHandler(OnNextWallpaper));
+            }
         }
 
         private void OnNextWallpaper(object sender, EventArgs e)
         {
-            wallpaperUpdater.Update(rssUrl);
-            intervalTimer.RestartInterval();
+            var menuItemName = sender.ToString();
+            var nextRssFeed = DetermineNextRssFeed(menuItemName);
+
+            DeleteHistoryIfFeedIsChangedAndSetNewFeed(nextRssFeed);
+
+            wallpaperUpdater.Update(selectedRssFeed);
+            intervalTimer.ResetInterval();
+        }
+
+        private void DeleteHistoryIfFeedIsChangedAndSetNewFeed(RssFeed nextRssFeed)
+        {
+            if (selectedRssFeed != nextRssFeed)
+                WallpaperHistory.Delete();
+
+            selectedRssFeed = nextRssFeed;
+        }
+
+        private RssFeed DetermineNextRssFeed(string menuItemName)
+        {
+            var foundRssFeed = rssFeeds.Where(f => f.Name.Equals(menuItemName)).FirstOrDefault();
+            return foundRssFeed ?? selectedRssFeed;
         }
 
         private void OnExit(object sender, EventArgs e)

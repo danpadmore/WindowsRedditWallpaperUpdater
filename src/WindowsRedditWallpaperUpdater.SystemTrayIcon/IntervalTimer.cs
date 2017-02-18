@@ -21,10 +21,10 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
         private void OnIntervalElapsed(object sender, EventArgs e)
         {
             methodToExecute.Invoke();
-            RestartInterval();
+            ResetInterval();
         }
 
-        public void RestartInterval()
+        public void ResetInterval()
         {
             timer.Stop();
             timer.Start();

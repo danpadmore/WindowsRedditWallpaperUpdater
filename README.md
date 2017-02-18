@@ -23,10 +23,25 @@ You can skip the current wallpaper by right-clicking the icon and selecting Next
 
 ### Choose your favourite subreddit
 
-Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and update the **value** of rssUrl:
+In the WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config you can find the location of a .json file in which you can specify a list of reddit RSS feeds.
 
 ```xml
-<add key="rssUrl" value="https://www.reddit.com/r/EarthPorn/.rss"/>
+<add key="rssFeedsFile" value="./RssFeeds.json" />
+```
+
+```json
+{
+    "RssFeeds": [
+        {
+            "Name": "EarthPorn",
+            "Url": "https://www.reddit.com/r/EarthPorn/.rss"
+        },
+        {
+            "Name": "Wallpapers",
+            "Url": "https://www.reddit.com/r/wallpapers/.rss"
+        }
+    ]
+}
 ```
 
 ### Change the refresh interval speed

@@ -40,6 +40,10 @@
     </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -62,10 +66,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="IntervalTimer.cs" />
+    <Compile Include="RssFeedsReader.cs" />
     <Compile Include="TrayIcon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
+    <None Include="RssFeeds.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WindowsRedditWallpaperUpdater.Library\WindowsRedditWallpaperUpdater.Library.csproj">
