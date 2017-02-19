@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.Drawing;
-using System.Timers;
+using System.Linq;
 using System.Windows.Forms;
 using WindowsRedditWallpaperUpdater.Library;
 
@@ -10,97 +10,89 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
 {
     public class ApplicationConfig : ApplicationContext
     {
-        private readonly NotifyIcon _notifyIcon;
-        private readonly WallpaperUpdater _wallpaperUpdater;
-        private readonly System.Timers.Timer _wallpaperRefreshTimer;
+        private readonly string rssFeedsFile = ConfigurationManager.AppSettings["rssFeedsFile"];
+        private readonly int intervalInMinutes = int.Parse(ConfigurationManager.AppSettings["refreshIntervalInMinutes"]);
 
-        private string RssUrl
+        private readonly WallpaperUpdater wallpaperUpdater;
+        private readonly IntervalTimer intervalTimer;
+        private readonly TrayIcon trayIcon;
+        private List<RssFeed> rssFeeds;
+        private RssFeed selectedRssFeed;
+
+        public ApplicationConfig()
         {
-            get { return ConfigurationManager.AppSettings["rssUrl"]; }
+            ReadRssFeedsFromFileOnDisk();
+
+            trayIcon = new TrayIcon("WindowsRedditWallpaperUpdater", Properties.Resources.SystemTrayIcon);
+            AddRssFeedsAsMenuItems();
+            AddDefaultMenuItems();
+            trayIcon.Initialize();
+
+            intervalTimer = new IntervalTimer(() => wallpaperUpdater.Update(selectedRssFeed), intervalInMinutes);
+            Application.ApplicationExit += new EventHandler(OnApplicationExit);
+
+            wallpaperUpdater = new WallpaperUpdater();
+            wallpaperUpdater.Update(selectedRssFeed);
         }
 
-        private TimeSpan RefreshInterval
+        private void ReadRssFeedsFromFileOnDisk()
         {
-            get
-            {
-                var refreshIntervalInMinutes = int.Parse(ConfigurationManager.AppSettings["refreshIntervalInMinutes"]);
+            rssFeeds = RssFeedsReader.ReadFileFromDisk(rssFeedsFile);
 
-                return TimeSpan.FromMinutes(refreshIntervalInMinutes);
+            if (rssFeeds.Count < 1)
+                EventLog.WriteEntry("Application", $"No rss feeds found in file {rssFeedsFile}.", EventLogEntryType.Error);
+
+            selectedRssFeed = rssFeeds.First();
+        }
+
+        private void AddDefaultMenuItems()
+        {
+            trayIcon
+                .AddMenuItem("Next Wallpaper", new EventHandler(OnNextWallpaper))
+                .AddMenuItem("Exit", new EventHandler(OnExit));
+        }
+
+        private void AddRssFeedsAsMenuItems()
+        {
+            foreach (var rssFeed in rssFeeds)
+            {
+                trayIcon.AddMenuItem(rssFeed.Name, new EventHandler(OnNextWallpaper));
             }
         }
 
-        public ApplicationConfig(NotifyIcon notifyIcon)
+        private void OnNextWallpaper(object sender, EventArgs e)
         {
-            if (notifyIcon == null) throw new ArgumentNullException(nameof(notifyIcon));
+            var menuItemName = sender.ToString();
+            var nextRssFeed = DetermineNextRssFeed(menuItemName);
 
-            _notifyIcon = notifyIcon;
-            _wallpaperUpdater = new WallpaperUpdater();
-            _wallpaperRefreshTimer = new System.Timers.Timer();
+            DeleteHistoryIfFeedIsChangedAndSetNewFeed(nextRssFeed);
 
-            InitializeTimer();
-            InitializeTrayIcon();
-            Application.ApplicationExit += new EventHandler(OnApplicationExit);
-
-            _wallpaperUpdater.Update(RssUrl);
+            wallpaperUpdater.Update(selectedRssFeed);
+            intervalTimer.ResetInterval();
         }
 
-        private void InitializeTimer()
+        private void DeleteHistoryIfFeedIsChangedAndSetNewFeed(RssFeed nextRssFeed)
         {
-            _wallpaperRefreshTimer.Elapsed += new ElapsedEventHandler(NextWallpaperEvent);
-            _wallpaperRefreshTimer.Interval = RefreshInterval.TotalMilliseconds;
-            _wallpaperRefreshTimer.Start();
+            if (selectedRssFeed != nextRssFeed)
+                WallpaperHistory.Delete();
+
+            selectedRssFeed = nextRssFeed;
         }
 
-        private void InitializeTrayIcon()
+        private RssFeed DetermineNextRssFeed(string menuItemName)
         {
-            _notifyIcon.Text = "WindowsRedditWallpaperUpdater";
-            _notifyIcon.Icon = Properties.Resources.SystemTrayIcon;
-
-            _notifyIcon.ContextMenuStrip = BuildContextMenu(new ToolStripItem[] {
-                BuildToolStripMenuItem("Next Wallpaper", new EventHandler(NextWallpaperEvent)),
-                BuildToolStripMenuItem("Exit", new EventHandler(ExitEvent))
-            });
-
-            _notifyIcon.Visible = true;
+            var foundRssFeed = rssFeeds.Where(f => f.Name.Equals(menuItemName)).FirstOrDefault();
+            return foundRssFeed ?? selectedRssFeed;
         }
 
-        private ContextMenuStrip BuildContextMenu(ToolStripItem[] toolStripMenuItem)
-        {
-            var contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.AddRange(toolStripMenuItem);
-            contextMenuStrip.Name = "TrayIconContextMenu";
-            contextMenuStrip.Size = new Size(153, 70);
-
-            return contextMenuStrip;
-        }
-
-        private ToolStripMenuItem BuildToolStripMenuItem(string name, EventHandler eventHandler)
-        {
-            var toolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem.Name = name.Replace(" ", "");
-            toolStripMenuItem.Size = new Size(152, 22);
-            toolStripMenuItem.Text = name;
-            toolStripMenuItem.Click += eventHandler;
-
-            return toolStripMenuItem;
-        }
-
-        private void NextWallpaperEvent(object sender, EventArgs e)
-        {
-            _wallpaperUpdater.Update(RssUrl);
-            _wallpaperRefreshTimer.Stop();
-            _wallpaperRefreshTimer.Start();
-        }
-
-        private void ExitEvent(object sender, EventArgs e)
+        private void OnExit(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
-            _notifyIcon.Visible = false;
-            EventLog.WriteEntry("Application", $"WindowsRedditWallpaperUpdater.SystemTrayIcon exited", EventLogEntryType.Information);
+            trayIcon.Dispose();
         }
     }
 }

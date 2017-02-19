@@ -19,12 +19,12 @@ namespace WindowsRedditWallpaperUpdater.Library
             _wallpaperHistory = new WallpaperHistory();
         }
 
-        public void Update(string rssUrl)
+        public void Update(RssFeed rssFeed)
         {
-            if (string.IsNullOrWhiteSpace(rssUrl)) throw new ArgumentNullException(nameof(rssUrl));
+            if (string.IsNullOrWhiteSpace(rssFeed.Url)) throw new ArgumentNullException(nameof(rssFeed.Url));
 
-            var nextWallpaperUrl = GetNextWallpaperUrl(rssUrl);
-            
+            var nextWallpaperUrl = GetNextWallpaperUrl(rssFeed.Url);
+
             try
             {
                 _wallpaper.Set(new Uri(nextWallpaperUrl), WallpaperStyle.Stretched);

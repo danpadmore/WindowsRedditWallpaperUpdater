@@ -1,0 +1,24 @@
+{
+    "RssFeeds": [
+        {
+            "Name": "EarthPorn",
+            "Url": "https://www.reddit.com/r/EarthPorn/.rss"
+        },
+        {
+            "Name": "Wallpapers",
+            "Url": "https://www.reddit.com/r/wallpapers/.rss"
+        },
+        {
+            "Name": "Imaginary Wallpapers",
+            "Url": "https://www.reddit.com/r/imaginarywallpapers/.rss"
+        },
+        {
+            "Name": "GAMING_Wallpapers",
+            "Url": "https://www.reddit.com/r/GAMING_Wallpapers/.rss"
+        },
+        {
+            "Name": "SpaceWalls",
+            "Url": "https://www.reddit.com/r/SpaceWalls/.rss"
+        }
+    ]
+}

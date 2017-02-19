@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Linq;
 
 namespace WindowsRedditWallpaperUpdater.Library
 {
@@ -39,6 +39,12 @@ namespace WindowsRedditWallpaperUpdater.Library
                     .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                     .ToList();
             }
+        }
+
+        public static void Delete()
+        {
+            IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null)
+                .DeleteFile(WallpaperHistoryFilePath);
         }
 
         private IsolatedStorageFileStream OpenFile(FileMode fileMode)
