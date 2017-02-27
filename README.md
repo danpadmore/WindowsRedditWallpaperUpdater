@@ -60,8 +60,6 @@ Open WindowsRedditWallpaperUpdaterSystemTrayIcon.exe.config in a text editor and
 <configuration>
 
  <system.net>
-  <defaultProxy useDefaultCredentials="true">
-   <proxy scriptLocation="http://your-proxy-script-location/here.dat" />
-   </defaultProxy>
+  <defaultProxy useDefaultCredentials="true" />
   </system.net>
 ```
