@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using WindowsRedditWallpaperUpdater.Library;
 
@@ -37,10 +39,13 @@ namespace WindowsRedditWallpaperUpdater.SystemTrayIcon
 
         private void ReadRssFeedsFromFileOnDisk()
         {
-            rssFeeds = RssFeedsReader.ReadFileFromDisk(rssFeedsFile);
+            var rssFeedsPath = Path.IsPathRooted(rssFeedsFile)
+                ? rssFeedsFile
+                : Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName, rssFeedsFile);
+            rssFeeds = RssFeedsReader.ReadFileFromDisk(rssFeedsPath);
 
             if (rssFeeds.Count < 1)
-                EventLog.WriteEntry("Application", $"No rss feeds found in file {rssFeedsFile}.", EventLogEntryType.Error);
+                EventLog.WriteEntry("Application", $"No rss feeds found in file {rssFeedsPath}.", EventLogEntryType.Error);
 
             selectedRssFeed = rssFeeds.First();
         }
